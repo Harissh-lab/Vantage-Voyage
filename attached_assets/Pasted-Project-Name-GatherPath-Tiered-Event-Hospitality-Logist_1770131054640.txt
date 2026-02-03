@@ -1,0 +1,71 @@
+Project Name: GatherPath - Tiered Event Hospitality & Logistics Platform
+
+Objective: Build a full-stack platform for travel agents to manage bulk event bookings (weddings/corporate). The app uses a "Label-based" permission system to manage Guest experiences, travel logistics, and expense coverage.
+
+1. Tech Stack:
+
+Frontend: React, Tailwind CSS (Luxury/Professional Aesthetic).
+
+Backend: Node.js.
+
+Database: PostgreSQL (Tables: Users, Events, Labels, Guests, Requests).
+
+2. The 3-Page Guest Flow:
+
+Page 1: RSVP & Identity: A "Find Your Invitation" search. Identifies the Guest and their assigned "Label" (e.g., VIP, Friend).
+
+Page 2: Travel & Rooming:
+
+Fixed Travel: Show read-only Travel Dates (Up/Down) and Mode (Flight/Train) as pre-arranged by the Agent/Client. Guests cannot change these dates.
+
+Rooming: Family head sees their name. "+ Add Family Member" button to add dependents. Logic: Suggest number of rooms based on total count.
+
+Page 3: Add-on Concierge (Crucial Logic):
+
+The Client dashboard must have two toggles for every Add-on (Pickup, Meals, etc.):
+
+"Allow Service" (Yes/No).
+
+"Expense Handled by Client" (Yes/No).
+
+IF Expense Handled = YES: Guest sees the perk as "Included" and clicks "Confirm."
+
+IF Expense Handled = NO: Guest sees the perk but with a "Contact Agent to Book/Pay" button.
+
+This button should allow the Guest to Call or Message the Agent directly to arrange private payment. This button is only visible if "Expense Handled" is unticked.
+
+3. User Role Dashboards:
+
+Agent View:
+
+Input fixed event dates/travel modes.
+
+Manage a "Request Inbox" for guests asking for permissions.
+
+Direct contact link for guests who need to pay out-of-pocket.
+
+Client View (The Host):
+
+Create "Labels" (VIP, Staff, etc.).
+
+For each label, use checkboxes to:
+
+Enable/Disable specific perks.
+
+Mark whether the Client is paying for that perk or if the Guest pays the Agent.
+
+Guest View: Personalized based on the settings above.
+
+4. Design Requirements:
+
+Use a "Lovable" professional theme (Champagne/Navy/Slate).
+
+Ensure the "Contact Agent" button on Page 3 is prominent for self-paying guests.
+
+Mobile-responsive (essential for guests traveling).
+
+5. Data Logic:
+
+If a guest requests a perk not allowed for their label, create a "Request" record.
+
+The Agent can "Forward to Client" for final approval of costs.
