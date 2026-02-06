@@ -48,3 +48,21 @@ export function useCreateEvent() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [api.events.list.path] }),
   });
 }
+
+export function useDeleteEvent() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/events/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to delete event");
+      }
+      return res.json();
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [api.events.list.path] }),
+  });
+}

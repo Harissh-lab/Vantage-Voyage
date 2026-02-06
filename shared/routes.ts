@@ -7,13 +7,18 @@ import {
   insertGuestSchema, 
   insertGuestFamilySchema, 
   insertGuestRequestSchema,
+  insertItineraryEventSchema,
+  insertGuestItinerarySchema,
   events,
   labels,
   perks,
   labelPerks,
   guests,
   guestFamily,
-  guestRequests
+  guestRequests,
+  itineraryEvents,
+  guestItinerary,
+  type GuestInvitation
 } from './schema';
 
 // ============================================
@@ -177,6 +182,14 @@ export const api = {
             404: errorSchemas.notFound
         }
     },
+    delete: {
+        method: 'DELETE' as const,
+        path: '/api/guests/:id',
+        responses: {
+            200: z.object({ success: z.boolean() }),
+            404: errorSchemas.notFound
+        }
+    },
     lookup: {
         method: 'GET' as const,
         path: '/api/guests/lookup',
@@ -184,6 +197,90 @@ export const api = {
         responses: {
             200: z.custom<typeof guests.$inferSelect & { event: typeof events.$inferSelect, label: typeof labels.$inferSelect }>(),
             404: errorSchemas.notFound
+        }
+    },
+    // Guest portal access with token
+    portal: {
+        method: 'GET' as const,
+        path: '/api/guest/portal/:token',
+        responses: {
+            200: z.custom<GuestInvitation>(),
+            404: errorSchemas.notFound,
+            401: z.object({ message: z.string() })
+        }
+    },
+    updateRSVP: {
+        method: 'PUT' as const,
+        path: '/api/guest/:token/rsvp',
+        input: z.object({
+            status: z.enum(['confirmed', 'declined']),
+            confirmedSeats: z.number().optional(),
+            familyMembers: z.array(z.object({
+                name: z.string(),
+                relationship: z.string(),
+                age: z.number().optional()
+            })).optional()
+        }),
+        responses: {
+            200: z.custom<typeof guests.$inferSelect>(),
+            400: errorSchemas.validation,
+            404: errorSchemas.notFound
+        }
+    },
+    updateBleisure: {
+        method: 'PUT' as const,
+        path: '/api/guest/:token/bleisure',
+        input: z.object({
+            extendedCheckIn: z.coerce.date().optional(),
+            extendedCheckOut: z.coerce.date().optional()
+        }),
+        responses: {
+            200: z.custom<typeof guests.$inferSelect>(),
+            400: errorSchemas.validation
+        }
+    },
+    uploadID: {
+        method: 'POST' as const,
+        path: '/api/guest/:token/upload-id',
+        input: z.object({
+            documentUrl: z.string(),
+            verifiedName: z.string()
+        }),
+        responses: {
+            200: z.object({ success: z.boolean(), message: z.string() }),
+            400: errorSchemas.validation
+        }
+    },
+    toggleSelfManagement: {
+        method: 'PUT' as const,
+        path: '/api/guest/:token/self-manage',
+        input: z.object({
+            selfManageFlights: z.boolean().optional(),
+            selfManageHotel: z.boolean().optional()
+        }),
+        responses: {
+            200: z.custom<typeof guests.$inferSelect>(),
+            400: errorSchemas.validation
+        }
+    },
+    joinWaitlist: {
+        method: 'POST' as const,
+        path: '/api/guest/:token/waitlist',
+        responses: {
+            200: z.object({ success: z.boolean(), position: z.number() }),
+            400: errorSchemas.validation
+        }
+    },
+    submitRequest: {
+        method: 'POST' as const,
+        path: '/api/guest/:token/request',
+        input: z.object({
+            type: z.string(),
+            notes: z.string().optional()
+        }),
+        responses: {
+            201: z.custom<typeof guestRequests.$inferSelect>(),
+            400: errorSchemas.validation
         }
     }
   },
@@ -229,6 +326,39 @@ export const api = {
           responses: {
               200: z.custom<typeof guestRequests.$inferSelect>(),
               404: errorSchemas.notFound
+          }
+      }
+  },
+  itinerary: {
+      list: { // Get all itinerary events for an event
+          method: 'GET' as const,
+          path: '/api/events/:eventId/itinerary',
+          responses: {
+              200: z.array(z.custom<typeof itineraryEvents.$inferSelect>())
+          }
+      },
+      create: {
+          method: 'POST' as const,
+          path: '/api/events/:eventId/itinerary',
+          input: insertItineraryEventSchema.omit({ eventId: true }),
+          responses: {
+              201: z.custom<typeof itineraryEvents.$inferSelect>(),
+              400: errorSchemas.validation
+          }
+      },
+      register: { // Guest registers for an itinerary event
+          method: 'POST' as const,
+          path: '/api/guest/:token/itinerary/:eventId/register',
+          responses: {
+              200: z.object({ success: z.boolean(), conflicts: z.array(z.string()).optional() }),
+              400: errorSchemas.validation
+          }
+      },
+      unregister: {
+          method: 'DELETE' as const,
+          path: '/api/guest/:token/itinerary/:eventId/unregister',
+          responses: {
+              200: z.object({ success: z.boolean() })
           }
       }
   }

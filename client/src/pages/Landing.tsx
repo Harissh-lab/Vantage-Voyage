@@ -8,25 +8,19 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-foreground">
-      {/* Nav */}
+      {/* Simple Nav */}
       <nav className="absolute top-0 w-full z-10 px-6 py-6 md:px-12">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-2xl font-serif italic font-bold text-primary">GatherPath</div>
-          <div className="flex gap-4">
-            {user ? (
+          <div className="text-2xl font-serif italic font-bold text-primary">Vantage Voyage</div>
+          {user && (
+            <div className="flex gap-4">
               <Link href="/dashboard">
                 <button className="px-6 py-2 bg-white/50 backdrop-blur border border-primary/10 rounded-full font-medium text-primary hover:bg-white transition-colors">
                   Go to Dashboard
                 </button>
               </Link>
-            ) : (
-              <a href="/api/login">
-                <button className="px-6 py-2 bg-primary text-white rounded-full font-medium shadow-lg hover:bg-primary/90 transition-all">
-                  Sign In
-                </button>
-              </a>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -53,7 +47,7 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
-            Empower agents and hosts to manage complex event logistics with a specialized permission system. From RSVP to personalized concierge services.
+            Empower agents and clients to manage complex event logistics with a specialized permission system. Streamlined workflows for hosts and service providers.
           </motion.p>
 
           <motion.div
@@ -62,18 +56,16 @@ export default function Landing() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link href="/guest">
-              <button className="px-8 py-4 bg-primary text-white rounded-full font-medium text-lg shadow-xl shadow-primary/20 hover:scale-105 transition-transform flex items-center justify-center gap-2">
-                Find Your Invitation <ArrowRight className="w-5 h-5" />
+            <Link href="/auth/agent/signin">
+              <button className="px-8 py-4 bg-primary text-white rounded-full font-medium text-lg shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
+                Agent Login
               </button>
             </Link>
-            {!user && (
-              <a href="/api/login">
-                <button className="px-8 py-4 bg-white border border-border text-primary rounded-full font-medium text-lg hover:bg-secondary/20 transition-colors">
-                  Agent Login
-                </button>
-              </a>
-            )}
+            <Link href="/auth/client/signin">
+              <button className="px-8 py-4 bg-white border-2 border-primary text-primary rounded-full font-medium text-lg hover:bg-primary hover:text-white transition-all">
+                Client Login
+              </button>
+            </Link>
           </motion.div>
         </div>
       </section>

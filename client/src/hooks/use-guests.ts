@@ -47,6 +47,24 @@ export function useCreateGuest() {
   });
 }
 
+export function useDeleteGuest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, eventId }: { id: number; eventId: number }) => {
+      const url = buildUrl(api.guests.delete.path, { id });
+      const res = await fetch(url, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to delete guest");
+      return api.guests.delete.responses[200].parse(await res.json());
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [api.guests.list.path, variables.eventId] });
+    },
+  });
+}
+
 export function useGuestLookup(ref: string) {
   return useQuery({
     queryKey: [api.guests.lookup.path, ref],

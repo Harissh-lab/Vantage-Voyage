@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
+import { Navigation } from "@/components/Navigation";
 
 interface GuestLayoutProps {
   children: React.ReactNode;
@@ -16,12 +17,13 @@ export function GuestLayout({ children, step, bookingRef }: GuestLayoutProps) {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-foreground font-sans selection:bg-accent/30">
+      <Navigation />
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-border/40">
+      <header className="bg-white/80 backdrop-blur-md sticky top-[52px] z-50 border-b border-border/40">
         <div className="max-w-5xl mx-auto px-4 h-20 flex items-center justify-between">
           <Link href="/">
             <div className="flex items-baseline gap-1 cursor-pointer">
-              <span className="font-serif text-2xl font-bold text-primary italic">GatherPath</span>
+              <span className="font-serif text-2xl font-bold text-primary italic">Vantage Voyage</span>
             </div>
           </Link>
 
@@ -69,7 +71,7 @@ export function GuestLayout({ children, step, bookingRef }: GuestLayoutProps) {
 
       {/* Footer */}
       <footer className="py-12 text-center text-sm text-muted-foreground border-t border-border/40 mt-12">
-        <p>© 2024 GatherPath Hospitality. All rights reserved.</p>
+        <p>© 2024 Vantage Voyage Hospitality. All rights reserved.</p>
       </footer>
     </div>
   );

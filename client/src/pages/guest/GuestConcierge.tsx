@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
-import { useGuestLookup, useCreateGuest } from "@/hooks/use-guests"; // Actually useRequests
+import { useGuestPortal } from "@/hooks/use-guest-portal";
 import { GuestLayout } from "@/components/GuestLayout";
-import { Loader2, Check, Star, Mail, Phone } from "lucide-react";
+import { Loader2, Check, Star, Mail, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLabelPerks } from "@/hooks/use-labels";
@@ -9,11 +9,10 @@ import { useCreateRequest } from "@/hooks/use-requests";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
-export default function GuestConcierge() {
-  const searchParams = new URLSearchParams(window.location.search);
-  const ref = searchParams.get("ref") || "";
-  const { data: guestInfo, isLoading } = useGuestLookup(ref);
+export default function GuestConcierge({ token }: { token: string }) {
+  const { data: guestData, isLoading } = useGuestPortal(token);
   const createRequest = useCreateRequest();
+  const [, navigate] = useLocation();
 
   // In a real app, we'd fetch perks filtered by the label. 
   // For this demo, let's assume we fetch `availablePerks` which comes from a specialized endpoint or hook
@@ -25,9 +24,9 @@ export default function GuestConcierge() {
   // In a real scenario, `useGuestLookup` would return `availablePerks` inside the object as per schema comment.
   
   if (isLoading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>;
-  if (!guestInfo) return <div className="p-10 text-center">Invalid Reference</div>;
+  if (!guestData) return <div className="p-10 text-center">Invalid access link</div>;
 
-  const { label } = guestInfo;
+  const { label } = guestData;
 
   // Mock perks for visual demonstration since we aren't seeding specific perks in this generator
   const availablePerks = [
@@ -47,7 +46,7 @@ export default function GuestConcierge() {
 
       await createRequest.mutateAsync({
         type: 'perk_request',
-        guestId: guestInfo.id,
+        guestId: guestData.id,
         perkId: perk.id,
         status: 'pending'
       });
@@ -137,6 +136,23 @@ export default function GuestConcierge() {
             </Button>
           </div>
         </div>
+
+        {/* Continue to Next Step */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex justify-center pt-8"
+        >
+          <Button 
+            size="lg"
+            className="px-12"
+            onClick={() => navigate(`/guest/${token}/idvault`)}
+          >
+            Continue to ID Verification
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
+        </motion.div>
       </div>
     </GuestLayout>
   );

@@ -11,11 +11,27 @@ import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
 import EventDetails from "@/pages/EventDetails";
+import EventSetup from "@/pages/EventSetup";
+import EventPreview from "@/pages/EventPreview";
+import GuestImport from "@/pages/GuestImport";
+import ApprovalReview from "@/pages/ApprovalReview";
+
+// Auth Pages
+import AgentSignIn from "@/pages/auth/AgentSignIn";
+import AgentSignUp from "@/pages/auth/AgentSignUp";
+import ClientSignIn from "@/pages/auth/ClientSignIn";
+import ClientSignUp from "@/pages/auth/ClientSignUp";
 
 // Guest Flow
 import GuestLookup from "@/pages/guest/GuestLookup";
+import GuestDashboard from "@/pages/guest/GuestDashboard";
+import GuestBleisure from "@/pages/guest/GuestBleisure";
 import GuestTravel from "@/pages/guest/GuestTravel";
 import GuestConcierge from "@/pages/guest/GuestConcierge";
+import GuestIDVault from "@/pages/guest/GuestIDVault";
+import GuestItinerary from "@/pages/guest/GuestItinerary";
+import GuestRoomUpgrade from "@/pages/guest/GuestRoomUpgrade";
+import { Redirect } from "wouter";
 
 function ProtectedRoute({ component: Component, ...rest }: any) {
   const { user, isLoading } = useAuth();
@@ -29,9 +45,7 @@ function ProtectedRoute({ component: Component, ...rest }: any) {
   }
 
   if (!user) {
-    // Redirect to login handled by use-auth hook logic or simple redirect
-    window.location.href = "/api/login";
-    return null;
+    return <Redirect to="/" />;
   }
 
   return <Component {...rest} />;
@@ -43,6 +57,12 @@ function Router() {
       {/* Public Routes */}
       <Route path="/" component={Landing} />
       
+      {/* Auth Routes */}
+      <Route path="/auth/agent/signin" component={AgentSignIn} />
+      <Route path="/auth/agent/signup" component={AgentSignUp} />
+      <Route path="/auth/client/signin" component={ClientSignIn} />
+      <Route path="/auth/client/signup" component={ClientSignUp} />
+      
       {/* Protected Agent/Client Routes */}
       <Route path="/dashboard">
         {() => <ProtectedRoute component={Dashboard} />}
@@ -50,11 +70,42 @@ function Router() {
       <Route path="/events/:id">
         {() => <ProtectedRoute component={EventDetails} />}
       </Route>
+      <Route path="/events/:id/setup">
+        {() => <ProtectedRoute component={EventSetup} />}
+      </Route>
+      <Route path="/events/:id/preview">
+        {() => <ProtectedRoute component={EventPreview} />}
+      </Route>
+      <Route path="/events/:id/approval">
+        {() => <ProtectedRoute component={ApprovalReview} />}
+      </Route>
+      <Route path="/events/:id/guests/import">
+        {() => <ProtectedRoute component={GuestImport} />}
+      </Route>
 
-      {/* Guest Flow Routes (Public with Ref) */}
+      {/* Guest Flow Routes (Public with Token) */}
+      <Route path="/guest/:token">
+        {(params) => <GuestDashboard />}
+      </Route>
+      <Route path="/guest/:token/bleisure">
+        {(params) => <GuestBleisure token={params.token} />}
+      </Route>
+      <Route path="/guest/:token/travel">
+        {(params) => <GuestTravel token={params.token} />}
+      </Route>
+      <Route path="/guest/:token/concierge">
+        {(params) => <GuestConcierge token={params.token} />}
+      </Route>
+      <Route path="/guest/:token/idvault">
+        {(params) => <GuestIDVault token={params.token} />}
+      </Route>
+      <Route path="/guest/:token/itinerary">
+        {(params) => <GuestItinerary token={params.token} />}
+      </Route>
+      <Route path="/guest/:token/room-upgrade">
+        {(params) => <GuestRoomUpgrade token={params.token} />}
+      </Route>
       <Route path="/guest" component={GuestLookup} />
-      <Route path="/guest/travel" component={GuestTravel} />
-      <Route path="/guest/concierge" component={GuestConcierge} />
 
       {/* Fallback */}
       <Route component={NotFound} />

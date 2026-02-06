@@ -1,25 +1,21 @@
-import { useRoute, useLocation } from "wouter";
-import { useGuestLookup } from "@/hooks/use-guests";
+import { useLocation } from "wouter";
+import { useGuestPortal } from "@/hooks/use-guest-portal";
 import { GuestLayout } from "@/components/GuestLayout";
 import { Loader2, Plane, Calendar, MapPin, User, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 
-export default function GuestTravel() {
-  const [match, params] = useRoute("/guest/travel"); // wouter params might not capture query well
-  const [location] = useLocation();
-  const searchParams = new URLSearchParams(window.location.search);
-  const ref = searchParams.get("ref") || "";
-  const { data: guestInfo, isLoading } = useGuestLookup(ref);
+export default function GuestTravel({ token }: { token: string }) {
+  const { data: guestData, isLoading } = useGuestPortal(token);
   const [, setLocation] = useLocation();
 
   if (isLoading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>;
-  if (!guestInfo) return <div className="p-10 text-center">Invalid Reference</div>;
+  if (!guestData) return <div className="p-10 text-center">Invalid access link</div>;
 
-  const { event, ...guest } = guestInfo;
+  const { event, ...guest } = guestData;
 
   return (
-    <GuestLayout step={2} bookingRef={ref}>
+    <GuestLayout step={2} bookingRef={guest.bookingRef}>
       <div className="space-y-8">
         {/* Welcome Header */}
         <div className="text-center mb-10">

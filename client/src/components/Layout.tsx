@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { Navigation } from "@/components/Navigation";
 import { 
   LogOut, 
   CalendarDays, 
@@ -20,11 +21,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen bg-muted/30 flex">
+    <div className="min-h-screen bg-muted/30 flex flex-col">
+      <Navigation />
+      <div className="flex flex-1">
       {/* Sidebar */}
-      <aside className="w-64 bg-primary text-primary-foreground hidden md:flex flex-col fixed inset-y-0">
+      <aside className="w-64 bg-primary text-primary-foreground hidden md:flex flex-col fixed inset-y-0 top-[52px]">
         <div className="p-8">
-          <h1 className="text-2xl font-serif italic text-secondary">GatherPath</h1>
+          <h1 className="text-2xl font-serif italic text-secondary">Vantage Voyage</h1>
           <p className="text-xs text-primary-foreground/60 mt-1 uppercase tracking-widest">Hospitality</p>
         </div>
 
@@ -69,6 +72,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
+      </div>
     </div>
   );
 }
